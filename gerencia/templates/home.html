@@ -29,11 +29,11 @@
                     <div class="row mb-2">
                         <div class="form-group col-md-6">
                             <label for="ins_estatual" class="form-label mb-1">inscrição estadual:</label>
-                            <input type="text" id="ins_estatual" name="ins_estatual" class="form-control" required pattern="[0-9]{1,15}">
+                            <input type="text" id="ins_estatual" name="ins_estatual" class="form-control" required pattern="[0-9]{1,30}">
                         </div>
                         <div class="form-group col-md-6">
                             <label for="ins_municipal" class="form-label mb-1">inscrição municipal:</label>
-                            <input type="text" id="ins_municipal" name="ins_municipal" class="form-control" required pattern="[0-9]{1,15}">
+                            <input type="text" id="ins_municipal" name="ins_municipal" class="form-control" required pattern="[0-9]{5,15}">
                         </div>
                     </div>
 
@@ -79,7 +79,7 @@
                         </div>
                         <div class="form-group col-md-4">
                             <label for="num_cel" class="form-label mb-1">Celular:</label>
-                            <input type="text" id="num_cel" name="Celular" class="form-control" pattern="\(\d{2}\)\s9\d{4}-\d{4}" placeholder="(11) 98888-8888">
+                            <input type="text" id="num_cel" name="Celular" class="form-control" pattern="\(\d{2}\)\s9\d{5}-\d{4}" placeholder="(11) 98888-8888">
                         </div>
                         <div class="form-group col align-self-center" >
                             <br>
@@ -115,8 +115,126 @@
 {% endblock %}
 {% block scripts %}
      <script>
-        
+        document.addEventListener('DOMContentLoaded', function() {
+            const razaoSocialInput = document.getElementById('razao_social');
+            const nomeFantasiaInput = document.getElementById('nome_fantasia');
+            const complementoInput = document.getElementById('complemento');
+            const logradouroInput = document.getElementById('logradouro');
+            const bairroInput = document.getElementById('bairro')
+            const municipioInput = document.getElementById('municipio');
+            const emailInput = document.getElementById('email');
+            const urlInput = document.getElementById('url')
+            const cnpjInput = document.getElementById('cnpj');
+            const cepInput = document.getElementById('cep');
+            const ufInput = document.getElementById('uf');
+            const telInput = document.getElementById('num_tell');
+            const celInput = document.getElementById('num_cel');
+            const whatsappCheck = document.getElementById('whatsapp');
+            const insEstatualInput = document.getElementById('ins_estatual');
+            const insMunicipalInput = document.getElementById('ins_municipal');
+
+            const basic = (e) => {
+                let value = e.target.value.replace(/[^a-zA-Z]/g, '');
+                e.target.value = value.slice(0, 15);                
+            };
+            
+
+            if (razaoSocialInput) {
+                razaoSocialInput.addEventListener('input', basic)
+            }
+
+            if (nomeFantasiaInput) {
+                nomeFantasiaInput.addEventListener('input', basic)
+            }
+
+            if (logradouroInput) {
+                logradouroInput.addEventListener('input', basic)
+            }
+
+            if (complementoInput) {
+                complementoInput.addEventListener('input', basic)
+            }
+
+            if (bairroInput) {
+                bairroInput.addEventListener('input', basic)
+            } 
+
+            if (municipioInput) {
+                municipioInput.addEventListener('input', basic)
+            }
+
+            if (emailInput) {
+                emailInput.addEventListener('input', basic)
+            }
+
+            if (urlInput) {
+                urlInput.addEventListener('input', basic)
+            }
+            
+            if (cnpjInput) {
+                cnpjInput.addEventListener('input', function(e){
+                    let value = e.target.value.replace(/\D/g, '');
+                    value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+                    value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+                    value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+                    value = value.replace(/(\d{4})(\d)/, '$1-$2');
+                    e.target.value = value.slice(0, 18);
+                });
+            }
+
+            if (cepInput){
+                cepInput.addEventListener('input', function(e){
+                    let value = e.target.value.replace(/\D/g, '');
+                    value = value.replace(/^(\d{5})(\d)/, '$1-$2')
+                    e.target.value = value.slice(0, 9);
+                });
+            }
+
+            const phoneMask = (e) => {
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+                value = value.replace(/(\d{5})(\d)/, '$1-$2');
+                e.target.value = value.slice(0, 15);
+            };
+
+            if (telInput) {
+                telInput.addEventListener('input', phoneMask);
+            }
+            if (celInput) {
+                celInput.addEventListener('input', phoneMask);
+            }
+
+            if (ufInput) {
+                ufInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/[^a-zA-Z]/g, ''); 
+                    e.target.value = value.toUpperCase().slice(0, 2); 
+                });
+            }
+
+            if (whatsappCheck) {
+                whatsappCheck.addEventListener('change', function() {
+                    if (this.checked) {
+                        celInput.setAttribute('required', 'required');
+                    } 
+                    else {celInput.removeAttribute('required');}
+                });
+            }
+
+            if (insEstatualInput) {
+                insEstatualInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    e.target.value = value.slice(0, 30);
+                });
+            }
+
+            if (insMunicipalInput) {
+                insMunicipalInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    e.target.value = value.slice(0, 30);
+                });
+            }
+        });
     </script>
     
 
-{% endblock %}
+{% endblock %}/
