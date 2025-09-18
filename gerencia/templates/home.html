@@ -40,7 +40,11 @@
                     <h2>Endereço</h2>
 
                     <div class="row mb-2">
-                        <div class="form-group md-6">
+                        <div class="form-group col-md-2">
+                            <label for="cep" class="form-label mb-1">CEP:</label>
+                            <input type="text" id="cep" name="cep" class="form-control" required pattern="\d{5}-\d{3}" placeholder="00000-000">
+                        </div>
+                        <div class="form-group col md-2">
                             <label for="logradouro" class="form-label mb-1">Logradoro:</label>
                             <input type="text" id="logradouro" name="logradouro" class="form-control" required minlength="5" maxlength="150">
                         </div>
@@ -48,29 +52,28 @@
                     
                     <div class="row mb-2">
                         <div class="form-group col-md-6">
-                            <label for="complemento" class="form-label mb-1">Complemento:</label>
-                            <input type="text" id="complemento" name="complemento" class="form-control" maxlength="80">
-                        </div>
-                        <div class="form-group col-md-6">
                             <label for="bairro" class="form-label mb-1">Bairro:</label>
                             <input type="text" id="bairro" name="bairro" class="form-control" required required minlength="3" maxlength="50">
                         </div>
+                         <div class="form-group col-md-6">
+                            <label for="municipio" class="form-label mb-1">Município:</label>
+                            <input type="text" id="municipio" name="municipio" class="form-control" required minlength="3" maxlength="50">
+                        </div>
+
                     </div>
 
                     <div class="row mb-2">
-                        <div class="form-group col-md-6">
-                            <label for="municipio" class="form-label mb-1">Município:</label>
-                            <input type="text" id="municipio" name="municipio" class="form-control" required minlength="3" maxlength="50">
+                        <div class="form-group col-md">
+                            <label for="complemento" class="form-label mb-1">Complemento:</label>
+                            <input type="text" id="complemento" name="complemento" class="form-control" maxlength="80">
                         </div>
                         <div class="form-group col-md-1">
                             <label for="uf" class="form-label mb-1">UF:</label>
                             <input type="text" id="uf" name="uf" class="form-control" required maxlength="2" minlength="2" pattern="[A-Za-z]{2}">
                         </div>
-                        <div class="form-group col-md-5">
-                            <label for="cep" class="form-label mb-1">CEP:</label>
-                            <input type="text" id="cep" name="cep" class="form-control" required pattern="\d{5}-\d{3}" placeholder="00000-000">
-                        </div>
                     </div>
+
+                    <h2>Contato</h2>
 
                     <div class="row mb-2">
                         <div class="form-group col-md-6">
@@ -132,43 +135,19 @@
             const whatsappCheck = document.getElementById('whatsapp');
             const insEstatualInput = document.getElementById('ins_estatual');
             const insMunicipalInput = document.getElementById('ins_municipal');
+            Campos_genericos = [razaoSocialInput, nomeFantasiaInput, complementoInput, logradouroInput, bairroInput, municipioInput, emailInput, urlInput]
 
             const basic = (e) => {
-                let value = e.target.value.replace(/[^a-zA-Z]/g, '');
-                e.target.value = value.slice(0, 15);                
+                let value = e.target.value
+                value = value.trim()
+                value = value.replace(/\s{2,}/g, ' ');  
+                e.target.value = value;              
             };
-            
 
-            if (razaoSocialInput) {
-                razaoSocialInput.addEventListener('input', basic)
-            }
-
-            if (nomeFantasiaInput) {
-                nomeFantasiaInput.addEventListener('input', basic)
-            }
-
-            if (logradouroInput) {
-                logradouroInput.addEventListener('input', basic)
-            }
-
-            if (complementoInput) {
-                complementoInput.addEventListener('input', basic)
-            }
-
-            if (bairroInput) {
-                bairroInput.addEventListener('input', basic)
-            } 
-
-            if (municipioInput) {
-                municipioInput.addEventListener('input', basic)
-            }
-
-            if (emailInput) {
-                emailInput.addEventListener('input', basic)
-            }
-
-            if (urlInput) {
-                urlInput.addEventListener('input', basic)
+            for (const campo of Campos_genericos) {
+                if (campo){
+                    campo.addEventListener('blur', basic)
+                }
             }
             
             if (cnpjInput) {
