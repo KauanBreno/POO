@@ -8,24 +8,33 @@
             <hr>
             <div class="col-md-8">
                 <form method="POST" action="{% url 'home' %}">{% csrf_token %}
+
+                    <div class="row justify-content-center">
+                        <div style="max-width: 16rem;" class="form-group col">
+                            <div class="input-group flex-nowrap">
+                                <span class="input-group-text" id="addon-wrapping">CNPJ</span>
+                                <input type="text" id="cnpj" name="cnpj" class="form-control" required pattern="\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}" placeholder="00.000.000/0000-00" minlength="18">
+                            </div>
+                        </div>
+                        <div style="max-width: 16rem;" class="form-group col">
+                            <div class="input-group flex-nowrap">  
+                                <span class="input-group-text" id="addon-wrapping">CEP</span>                              
+                                <input type="text" id="cep" name="cep" class="form-control" required pattern="\d{5}-\d{3}" placeholder="00000-000">
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <hr>
                     <div class="row mb-2">
-                        <div class="form-group md-6">
+                        <div class="form-group col-md-6">
                             <label for="razao_social" class="form-label mb-1">Razão social:</label>
                             <input type="text" id="razao_social" name="razao_social" class="form-control" required required minlength="3" maxlength="100">
                         </div>
-                    </div>
-
-                    <div class="row mb-2">
                         <div class="form-group col-md-6"> 
                             <label for="nome_fantasia" class="form-label mb-1">Nome fantasia:</label>
                             <input type="text" id="nome_fantasia" name="nome_fantasia" class="form-control" required minlength="3" maxlength="100">
                         </div>
-                        <div class="form-group col-md-6">
-                            <label for="cnpj" class="form-label mb-1">CNPJ:</label>
-                            <input type="text" id="cnpj" name="cnpj" class="form-control" required pattern="\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}" placeholder="00.000.000/0000-00">
-                        </div>
                     </div>
-
                     <div class="row mb-2">
                         <div class="form-group col-md-6">
                             <label for="ins_estatual" class="form-label mb-1">inscrição estadual:</label>
@@ -40,10 +49,6 @@
                     <h2>Endereço</h2>
 
                     <div class="row mb-2">
-                        <div class="form-group col-md-2">
-                            <label for="cep" class="form-label mb-1">CEP:</label>
-                            <input type="text" id="cep" name="cep" class="form-control" required pattern="\d{5}-\d{3}" placeholder="00000-000">
-                        </div>
                         <div class="form-group col md-2">
                             <label for="logradouro" class="form-label mb-1">Logradoro:</label>
                             <input type="text" id="logradouro" name="logradouro" class="form-control" required minlength="5" maxlength="150">
@@ -86,7 +91,7 @@
                         </div>
                         <div class="form-group col align-self-center" >
                             <br>
-                            <input type="checkbox" id="whatsapp" name="whatsapp" class="form-check-input" value="TRUE">
+                            <input type="checkbox" id="whatsapp" name="whatsapp" class="form-check-input" value="True">
                             <label for="whatsapp" class="form-check-label ">Whatsapp?</label>
                         </div>
                     </div>
@@ -106,7 +111,7 @@
                     </div>
                     <div class="row mb-2">
                         <div class="form-group md-6">
-                            <button class="btn btn-primary form-control" type="submit">Cadastrar</button>
+                            <button class="btn btn-secondary form-control" type="submit">Cadastrar</button>
                         </div>
                     </div>
                     
@@ -137,56 +142,74 @@
             const insMunicipalInput = document.getElementById('ins_municipal');
             Campos_genericos = [razaoSocialInput, nomeFantasiaInput, complementoInput, logradouroInput, bairroInput, municipioInput, emailInput, urlInput]
 
-            const basic = (e) => {
-                let value = e.target.value
-                value = value.trim()
+            function basicValition(valor) {
+                let value = valor.trim()
                 value = value.replace(/\s{2,}/g, ' ');  
-                e.target.value = value;              
+                return value
+            }
+
+            function cnpjMask(cnpj) {
+                let value =  cnpj.replace(/\D/g, '');
+                value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+                value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+                value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+                value = value.replace(/(\d{4})(\d)/, '$1-$2');
+                return value.slice(0, 18);
+            }
+
+            function cepMask(cep) {
+                let value = cep.replace(/\D/g, '');
+                value = value.replace(/^(\d{5})(\d)/, '$1-$2')
+                return value.slice(0, 9);
+            }
+            
+            function phoneMask (phone) {
+                let value = phone.replace(/\D/g, '');
+                value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+                value = value.replace(/(\d{5})(\d)/, '$1-$2');
+                return value.slice(0, 15);
             };
+            
+            function ufMask (uf) {
+                let value = uf.replace(/[^a-zA-Z]/g, ''); 
+                return value.toUpperCase().slice(0, 2); 
+            } 
 
             for (const campo of Campos_genericos) {
                 if (campo){
-                    campo.addEventListener('blur', basic)
+                    campo.addEventListener('blur', function(e){
+                        e.target.value = basicValition(e.target.value)
+                    })
                 }
             }
             
             if (cnpjInput) {
                 cnpjInput.addEventListener('input', function(e){
-                    let value = e.target.value.replace(/\D/g, '');
-                    value = value.replace(/^(\d{2})(\d)/, '$1.$2');
-                    value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
-                    value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
-                    value = value.replace(/(\d{4})(\d)/, '$1-$2');
-                    e.target.value = value.slice(0, 18);
-                });
-            }
-
+                    e.target.value = cnpjMask(e.target.value)
+                });    
+            }    
+            
             if (cepInput){
                 cepInput.addEventListener('input', function(e){
-                    let value = e.target.value.replace(/\D/g, '');
-                    value = value.replace(/^(\d{5})(\d)/, '$1-$2')
-                    e.target.value = value.slice(0, 9);
+                    e.target.value = cepMask(e.target.value)
                 });
             }
 
-            const phoneMask = (e) => {
-                let value = e.target.value.replace(/\D/g, '');
-                value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
-                value = value.replace(/(\d{5})(\d)/, '$1-$2');
-                e.target.value = value.slice(0, 15);
-            };
-
             if (telInput) {
-                telInput.addEventListener('input', phoneMask);
-            }
+                telInput.addEventListener('input', function(e) {
+                    e.target.value = phoneMask(e.target.value)
+                });
+            }    
+
             if (celInput) {
-                celInput.addEventListener('input', phoneMask);
+                celInput.addEventListener('input', function(e) {
+                    e.target.value = phoneMask(e.target.value)
+                });
             }
 
             if (ufInput) {
                 ufInput.addEventListener('input', function(e) {
-                    let value = e.target.value.replace(/[^a-zA-Z]/g, ''); 
-                    e.target.value = value.toUpperCase().slice(0, 2); 
+                    e.target.value = ufMask(e.target.value)    
                 });
             }
 
@@ -212,7 +235,92 @@
                     e.target.value = value.slice(0, 30);
                 });
             }
+
+            if (cnpjInput) {
+                cnpjInput.addEventListener('blur', function(e) {
+                    const cnpj = event.target.value.replace(/\D/g, '');
+                    if (cnpj.length !== 14) {
+                        console.log('CNPJ inválido.');
+                        return;
+                    }
+
+                    const url = `https://brasilapi.com.br/api/cnpj/v1/${cnpj}`;
+
+                    fetch(url)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Erro ao consultar o CNPJ. Verifique se ele é válido.');
+                            }
+                            return response.json();
+                        })
+
+                        .then(data => {
+                            razaoSocialInput.value = data.razao_social;
+                            nomeFantasiaInput.value = data.nome_fantasia;
+                            logradouroInput.value = data.logradouro
+                            bairroInput.value = data.bairro
+                            municipioInput.value = data.municipio
+                            
+                            if (data.complemento) {
+                                complementoInput.value = data.complemento
+                            }
+                            if (data.cep) {
+                                cepInput.value = data.cep;
+                                cepInput.value = cepMask(cepInput.value)
+                            }
+                            if (data.uf) {
+                                ufInput.value = data.uf
+                                ufInput.value = ufMask(ufInput.value)
+                            }
+
+                            if (data.ddd_telefone_1) {
+                                telInput.value = data.ddd_telefone_1
+                                telInput.value = phoneMask(telInput.value)
+                            }
+
+                            if (data.email) {
+                                emailInput.value = data.email
+                            }
+
+                            for (campo of Campos_genericos){
+                                campa.value = basicValition(campo)
+                            }
+                        })     
+                })
+            }
         });
+
+        if (cepInput) {
+            cepInput.addEventListener('blur', function(e) {
+                const cep = event.target.value.replace(/\D/g, '');
+                if (cep.length !== 8) {
+                    console.log('CEP inválido.');
+                    return;
+                }
+
+                const url = `https://brasilapi.com.br/cep/v2/${cep}`;
+
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erro ao consultar o CEP. Verifique se ele é válido.');
+                        }
+                        return response.json();
+                    })
+
+                    .then(data => {
+                        logradouroInput.value = data.street
+                        bairroInput.value = data.neighborhood
+                        municipioInput.value = data.city
+                        
+                        if (data.state) {
+                            ufInput.value = data.state
+                            ufInput.value = ufMask(ufInput.value)
+                        }
+                    })
+            })
+        }
+
     </script>
     
 

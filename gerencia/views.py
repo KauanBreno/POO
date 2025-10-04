@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from.models import Clientes
+from.models import Clientes, Enderecos, Contatos
 
 def home(request):
     if request.method == "GET":
@@ -13,7 +13,7 @@ def home(request):
             cnpj = request.POST.get('cnpj')
             ins_estadual = request.POST.get('ins_estatual')
             ins_municipal = request.POST.get('ins_estatual')
-            logradouro = request.POST.get('logradouro')
+            logradoro = request.POST.get('logradoro')
             complemento = request.POST.get('complemento')
             bairro = request.POST.get('bairro')
             municipio = request.POST.get('municipio')
@@ -25,24 +25,32 @@ def home(request):
             email = request.POST.get('email')
             url = request.POST.get('url')        
             
-            cliente = Clientes(
-                nome_fantasia = nome_fantasia,
-                razao_social = razao_social,
-                cnpj = cnpj,
-                inscricao_minicipal = ins_estadual,
-                inscricao_estadual = ins_municipal,
-                logradoro = logradouro,
-                complemento = complemento,
-                bairro = bairro,
-                municipio = municipio,
-                uf = uf,
-                cep = cep,
-                celular = num_cell,
-                telefone = num_tell,
-                whatsapp = whatsapp,
-                email = email,
-                url = url
+            try:
+                cliente = Clientes.objects.create(
+                    nome_fantasia=nome_fantasia,
+                    razao_social=razao_social,
+                    cnpj=cnpj,
+                    inscricao_estadual=ins_estadual,
+                    inscricao_minicipal=ins_municipal
                 )
-            return HttpResponse("thanks")
-        
-        
+                Enderecos.objects.create(
+                    logradoro=logradoro,
+                    complemento=complemento,
+                    bairro=bairro,
+                    municipio=municipio,
+                    uf=uf,
+                    cep=cep,
+                    cliente=cliente
+                )
+                Contatos.objects.create(
+                    telefone=num_tell,
+                    celular=num_cell,
+                    whatsapp=whatsapp,
+                    email=email,
+                    url=url,
+                    cliente=cliente
+                )
+                return HttpResponse("Cliente cadastrado com sucesso!")
+
+            except Exception as e:
+                return HttpResponse(f"Erro ao cadastrar cliente: {e}", status=400)
