@@ -1,0 +1,256 @@
+{% extends 'base.html' %}
+{% block content %}
+
+  <div class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h1>Detalhes do Cliente</h1>
+          <div class="d-flex gap-2 align-items-center">
+            <form id="deleteForm" class="m-0 d-inline" method="post" action="{% url 'delete_cliente' cliente.pk %} "></form>
+              {% csrf_token %}
+              <button id="btnExcluir" type="submit" class="btn btn-danger">Excluir</button>
+            </form>
+            <a href="{% url 'edit_cliente' cliente.pk %}" class="btn btn-primary">Editar</a>
+          </div>
+        </div>
+
+        <!-- Informações do Cliente -->
+        <div class="card mb-4">
+          <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Informações da Empresa</h4>
+          </div>
+          <div class="card-body">
+
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <label class="text-muted small">Razão Social</label>
+                <p class="fw-semibold">{{ cliente.razao_social }}</p>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="text-muted small">Nome Fantasia</label>
+                <p class="fw-semibold">{{ cliente.nome_fantasia }}</p>
+              </div>
+              <div class="col-md-6">
+                <label class="text-muted small">CNPJ</label>
+                <p id="cnpj" class="fw-semibold">{{ cliente.cnpj }}</p>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <label class="text-muted small">Inscrição Estadual</label>
+                <p class="fw-semibold">{{ cliente.inscricao_estadual|default:"Não informado" }}</p>
+              </div>
+              <div class="col-md-6">
+                <label class="text-muted small">Inscrição Municipal</label>
+                <p class="fw-semibold">{{ cliente.inscricao_municipal|default:"Não informado" }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Endereço -->
+        <div class="card mb-4">
+          <div class="card-header bg-success text-white">
+            <h4 class="mb-0">Endereço</h4>
+          </div>
+          <div class="card-body">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="text-muted small">Logradouro</label>
+                <p class="fw-semibold">{{ cliente.endereco.logradoro }}</p>
+              </div>
+              <div class="col-md-6">
+                <label class="text-muted small">Bairro</label>
+                <p class="fw-semibold">{{ cliente.endereco.bairro }}</p>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="text-muted small">Município</label>
+                <p class="fw-semibold">{{ cliente.endereco.municipio }}</p>
+              </div>
+              <div class="col-md-6">
+                <label class="text-muted small">UF</label>
+                <p class="fw-semibold">{{ cliente.endereco.uf }}</p>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <label class="text-muted small">Complemento</label>
+                <p class="fw-semibold">{{ cliente.endereco.complemento|default:"Não informado" }}</p>
+              </div>
+              <div class="col-md-6">
+                <label class="text-muted small">CEP</label>
+                <p id="cep" class="fw-semibold">{{ cliente.endereco.cep }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contato -->
+        <div class="card mb-4">
+          <div class="card-header bg-info text-white">
+            <h4 class="mb-0">Contato</h4>
+          </div>
+          <div class="card-body">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="text-muted small">Telefone</label>
+                <p id="telefone" class="fw-semibold">{{ cliente.contatos.telefone }}</p>
+              </div>
+              <div class="col-md-6">
+                <label class="text-muted small">Celular</label>
+                <p class="fw-semibold">
+                  {{ cliente.contatos.celular|default:"Não informado" }}
+                  {% if cliente.contatos.whatsapp %}
+                    <span id="celular" class="badge bg-success">WhatsApp</span>
+                  {% endif %}
+                </p>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="text-muted small">E-mail</label>
+                {% if cliente.contatos.email %}
+                      <p class="fw-semibold">
+                        <a href="mailto:{{ cliente.contatos.email }}">{{ cliente.contatos.email }}</a>
+                      </p>
+                {% else %}
+                      <p class="fw-semibold">Não informado</p>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="text-muted small">Website</label>
+                <p class="fw-semibold">
+                  {% if cliente.contatos.url %}
+                    <a href="{{ cliente.contatos.url }}" target="_blank">{{ cliente.contatos.url }}</a>
+                  {% else %}
+                    Não informado
+                  {% endif %}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Excluir Cliente</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        Tem certeza que deseja excluir o cliente <strong>{{ cliente.razao_social }}</strong>?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Excluir</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+      function confirmarExclusao() {
+        return confirm('Tem certeza que deseja excluir este cliente? Essa ação não pode ser desfeita!');
+        console.log('Exclusão confirmada');
+      }
+
+      function cnpjMask(cnpj) {
+        let value =  cnpj.replace(/\D/g, '');
+        value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+        value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+        value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+        value = value.replace(/(\d{4})(\d)/, '$1-$2');
+        return value.slice(0, 18);
+      }
+
+      function phoneMask(phone) {
+          let value = phone.replace(/\D/g, '');
+          if (value.length > 10) {
+              value = value.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+          } else {
+              value = value.replace(/^(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+          }
+          return value.slice(0, 15);
+      }
+
+      function celularMask(celular) {
+          let value = celular.replace(/\D/g, '');
+          if (value.length > 10) {
+              value = value.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+          } else {
+              value = value.replace(/^(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+          }
+          return value.slice(0, 15);
+      }
+
+      function cepMask(cep) {
+          let value = cep.replace(/\D/g, '');
+          value = value.replace(/^(\d{5})(\d)/, '$1-$2')
+          return value.slice(0, 9);
+      }
+
+      document.querySelectorAll('#cnpj').forEach(td => {
+        td.textContent = cnpjMask(td.textContent);
+      });
+
+      document.querySelectorAll('#cep').forEach(td => {
+        td.textContent = cepMask(td.textContent);
+      });
+
+      document.querySelectorAll('#telefone').forEach(td => {
+        td.textContent = phoneMask(td.textContent);
+      });
+
+      document.querySelectorAll('#celular').forEach(td => {
+        td.textContent = celularMask(td.textContent);
+      });
+
+      const modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+      const btnExcluir = document.getElementById('btnExcluir');
+      const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+      const deleteForm = document.getElementById('deleteForm');
+
+      btnExcluir.addEventListener('click', () => {
+        modal.show();
+      });
+
+      confirmDeleteBtn.addEventListener('click', () => {
+        fetch(deleteForm.action, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            modal.hide();
+            // Redireciona pra lista
+            window.location.href = "{% url 'home' %}";
+          }
+        })
+        .catch(err => console.error(err));
+      });
+    });
+  </script>
+
+{% endblock %}

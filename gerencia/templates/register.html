@@ -1,0 +1,484 @@
+{% extends 'base.html' %}
+{% block content %}
+
+  <div class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <!-- Cabeçalho -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          {% if cliente %}
+            <h1>Edição de cliente</h1>
+          {% else %}
+            <h1>Cadastro de cliente</h1>
+          {% endif %}
+          {% if cliente %}
+            <a href="{% url 'cliente' cliente.pk %}" class="btn btn-danger">Cancelar</a>
+          {% endif %}
+        </div>
+
+        <div class="col-md-12">
+          <form method="POST" action="{% if cliente %} {% url 'edit_cliente' cliente.pk %} {% else %} {% url 'register' %} {% endif %}">{% csrf_token %}
+            {{ endereco_formset.management_form }}
+            {{ contato_formset.management_form }}
+
+            <!-- Erros gerais do formulário -->
+            {% if cliente_form.non_field_errors %}
+              <div class="alert alert-danger">
+                {% for error in cliente_form.non_field_errors %}
+                  <p class="mb-0">{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <!-- Informações da Empresa -->
+            <div class="card mb-4">
+              <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Informações da Empresa</h4>
+              </div>
+              <div class="card-body">
+                <div class="row mb-3">
+                  <div class="form-group col-md-12">
+                    <label for="id_razao_social" class="form-label">Razão social:</label>
+                    {{ cliente_form.razao_social }}
+                    {% for error in cliente_form.razao_social.errors %}
+                      <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="form-group col-md-6">
+                    <label for="id_cnpj" class="form-label">CNPJ:</label>
+                    <div class="input-group">
+                      {{ cliente_form.cnpj }}
+                      <button class="btn btn-outline-secondary" type="button" id="btnBuscarCNPJ" title="Buscar CNPJ">🔍</button>
+                    </div>
+                    {% for error in cliente_form.cnpj.errors %}
+                      <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="id_nome_fantasia" class="form-label">Nome fantasia:</label>
+                    {{ cliente_form.nome_fantasia }}
+                    {% for error in cliente_form.nome_fantasia.errors %}
+                      <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="form-group col-md-6">
+                    <label for="id_inscricao_estadual" class="form-label">Inscrição estadual:</label>
+                    {{ cliente_form.inscricao_estadual }}
+                    {% for error in cliente_form.inscricao_estadual.errors %}
+                      <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="id_inscricao_municipal" class="form-label">Inscrição municipal:</label>
+                    {{ cliente_form.inscricao_municipal }}
+                    {% for error in cliente_form.inscricao_municipal.errors %}
+                      <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Endereço -->
+            {% for endereco_form in endereco_formset %}
+              {{ endereco_form.id }}
+              <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                  <h4 class="mb-0">Endereço</h4>
+                </div>
+                <div class="card-body">
+                  {% if endereco_formset.non_form_errors %}
+                    <div class="alert alert-danger">
+                      {% for error in endereco_formset.non_form_errors %}
+                        <p class="mb-0">{{ error }}</p>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+
+                  <div class="row mb-3">
+                    <div class="form-group col-md-3">
+                      <label for="id_endereco-0-cep" class="form-label">CEP:</label>
+                      <div class="input-group">
+                        {{ endereco_form.cep }}
+                        <button class="btn btn-outline-secondary" type="button" id="btnBuscarCEP" title="Buscar CEP">🔍</button>
+                      </div>
+                      {% for error in endereco_form.cep.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                    <div class="form-group col-md-9">
+                      <label for="id_endereco-0-logradoro" class="form-label">Logradouro:</label>
+                      {{ endereco_form.logradoro }}
+                      {% for error in endereco_form.logradoro.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="form-group col-md-5">
+                      <label for="id_endereco-0-bairro" class="form-label">Bairro:</label>
+                      {{ endereco_form.bairro }}
+                      {% for error in endereco_form.bairro.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                    <div class="form-group col-md-5">
+                      <label for="id_endereco-0-municipio" class="form-label">Município:</label>
+                      {{ endereco_form.municipio }}
+                      {% for error in endereco_form.municipio.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                    <div class="form-group col-md-2">
+                      <label for="id_endereco-0-uf" class="form-label">UF:</label>
+                      {{ endereco_form.uf }}
+                      {% for error in endereco_form.uf.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="form-group col-md-12">
+                      <label for="id_endereco-0-complemento" class="form-label">Complemento:</label>
+                      {{ endereco_form.complemento }}
+                      {% for error in endereco_form.complemento.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+
+            <!-- Contato -->
+            {% for contato_form in contato_formset %}
+              {{ contato_form.id }}
+              <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                  <h4 class="mb-0">Contato</h4>
+                </div>
+                <div class="card-body">
+                  {% if contato_formset.non_form_errors %}
+                    <div class="alert alert-danger">
+                      {% for error in contato_formset.non_form_errors %}
+                        <p class="mb-0">{{ error }}</p>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+
+                  <div class="row mb-3">
+                    <div class="form-group col-md-5">
+                      <label for="id_contatos-0-telefone" class="form-label">Telefone:</label>
+                      {{ contato_form.telefone }}
+                      {% for error in contato_form.telefone.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                    <div class="form-group col-md-5">
+                      <label for="id_contatos-0-celular" class="form-label">Celular:</label>
+                      {{ contato_form.celular }}
+                      {% for error in contato_form.celular.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                    <div class="form-group col-md-2 d-flex align-items-end">
+                      <div class="form-check">
+                        {{ contato_form.whatsapp }}
+                        <label for="id_contatos-0-whatsapp" class="form-check-label">WhatsApp</label>
+                      </div>
+                      {% for error in contato_form.whatsapp.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="form-group col-md-12">
+                      <label for="id_contatos-0-email" class="form-label">E-mail:</label>
+                      {{ contato_form.email }}
+                      {% for error in contato_form.email.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="form-group col-md-12">
+                      <label for="id_contatos-0-url" class="form-label">Website:</label>
+                      {{ contato_form.url }}
+                      {% for error in contato_form.url.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+
+            <!-- Botão de Submissão -->
+            <div class="d-grid gap-2">
+              <button class="btn btn-primary btn-lg" type="submit">
+                {% if cliente %}Salvar alterações{% else %}Cadastrar cliente{% endif %}
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block scripts %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const razaoSocialInput = document.getElementById('id_razao_social');
+      const nomeFantasiaInput = document.getElementById('id_nome_fantasia');
+      const complementoInput = document.getElementById('id_endereco-0-complemento');
+      const logradouroInput = document.getElementById('id_endereco-0-logradoro');
+      const bairroInput = document.getElementById('id_endereco-0-bairro');
+      const municipioInput = document.getElementById('id_endereco-0-municipio');
+      const emailInput = document.getElementById('id_contatos-0-email');
+      const urlInput = document.getElementById('id_contatos-0-url');
+      const cnpjInput = document.getElementById('id_cnpj');
+      const btnCNPJ = document.getElementById('btnBuscarCNPJ');
+      const cepInput = document.getElementById('id_endereco-0-cep');
+      const btnCEP = document.getElementById('btnBuscarCEP');
+      const ufInput = document.getElementById('id_endereco-0-uf');
+      const telInput = document.getElementById('id_contatos-0-telefone');
+      const celInput = document.getElementById('id_contatos-0-celular');
+      const whatsappCheck = document.getElementById('id_contatos-0-whatsapp');
+      const insEstatualInput = document.getElementById('id_inscricao_estadual');
+      const insMunicipalInput = document.getElementById('id_inscricao_municipal');
+      Campos_genericos = [razaoSocialInput, nomeFantasiaInput, complementoInput, logradouroInput, bairroInput, municipioInput, emailInput, urlInput]
+
+      if (cnpjInput && cnpjInput.value) cnpjInput.value = cnpjMask(cnpjInput.value);
+      if (cepInput && cepInput.value) cepInput.value = cepMask(cepInput.value);
+      if (telInput && telInput.value) telInput.value = telefoneMask(telInput.value);
+      if (celInput && celInput.value) celInput.value = celularMask(celInput.value);
+      if (ufInput && ufInput.value) ufInput.value = ufMask(ufInput.value);
+
+      function basicValtion(valor) {
+        let value = valor.trim()
+        value = value.replace(/\s{2,}/g, ' ');
+        return value
+      }
+
+      function cnpjMask(cnpj) {
+        let value =  cnpj.replace(/\D/g, '');
+        value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+        value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+        value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+        value = value.replace(/(\d{4})(\d)/, '$1-$2');
+        return value.slice(0, 18);
+      }
+
+      function cepMask(cep) {
+        let value = cep.replace(/\D/g, '');
+        value = value.replace(/^(\d{5})(\d)/, '$1-$2')
+        return value.slice(0, 9);
+      }
+
+      function telefoneMask (telefone) {
+        let value = telefone.replace(/\D/g, '');
+        value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+        value = value.replace(/(\d{4})(\d)/, '$1-$2');
+        return value.slice(0, 15);
+      }
+
+      function celularMask (celular) {
+        let value = celular.replace(/\D/g, '');
+        value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+        value = value.replace(/(\d{5})(\d)/, '$1-$2');
+        return value.slice(0, 15);
+      }
+
+      function ufMask (uf) {
+        let value = uf.replace(/[^a-zA-Z]/g, '');
+        return value.toUpperCase().slice(0, 2);
+      }
+
+      for (const campo of Campos_genericos) {
+        if (campo) {
+          campo.addEventListener('blur', function(e) {
+            e.target.value = basicValition(e.target.value)
+          })
+        }
+      }
+
+      if (cnpjInput) {
+        cnpjInput.addEventListener('input', function(e) {
+          e.target.value = cnpjMask(e.target.value)
+        });
+      }
+
+      if (cepInput) {
+        cepInput.addEventListener('input', function(e) {
+          e.target.value = cepMask(e.target.value)
+        });
+      }
+
+      if (telInput) {
+        telInput.addEventListener('input', function(e) {
+          e.target.value = telefoneMask(e.target.value)
+        });
+      }
+
+      if (celInput) {
+        celInput.addEventListener('input', function(e) {
+          e.target.value = celularMask(e.target.value)
+        });
+      }
+
+      if (ufInput) {
+        ufInput.addEventListener('input', function(e) {
+          e.target.value = ufMask(e.target.value)
+        });
+      }
+
+      if (whatsappCheck) {
+        whatsappCheck.addEventListener('change', function() {
+          if (this.checked) {
+            celInput.setAttribute('required', 'required');
+          } else {
+            celInput.removeAttribute('required');
+          }
+        });
+      }
+
+      if (insEstatualInput) {
+        insEstatualInput.addEventListener('input', function(e) {
+          let value = e.target.value.replace(/\D/g, '');
+          e.target.value = value.slice(0, 30);
+        });
+      }
+
+      if (insMunicipalInput) {
+        insMunicipalInput.addEventListener('input', function(e) {
+          let value = e.target.value.replace(/\D/g, '');
+          e.target.value = value.slice(0, 30);
+        });
+      }
+
+      btnCNPJ.addEventListener('click', () => {
+        const cnpj = cnpjInput.value.replace(/\D/g, '')
+        if (cnpj.trim() !== '' && cnpj.length === 14) {
+          buscarCNPJ(cnpj);
+          const erro = document.getElementById('error_cnpj');
+          if (erro) {
+            erro.remove();
+          }
+        } else {
+          erro = document.getElementById('error_cnpj')
+          if (!erro) {
+            const divErro = document.createElement('div')
+            divErro.id = 'error_cnpj'
+            divErro.className = 'text-danger small'
+            divErro.textContent = 'Digite um CNPJ válido antes de buscar.'
+            cnpjInput.closest('.form-group').appendChild(divErro)
+          }
+        }
+      });
+
+      btnCEP.addEventListener('click', () => {
+        const cep = cepInput.value.replace(/\D/g, '')
+        if (cep.trim() !== '' && cep.length === 8) {
+          buscarCEP(cep);
+          const erro = document.getElementById('error_cep');
+          if (erro) {
+            erro.remove();
+          }
+        } else {
+          erro = document.getElementById('error_cep')
+          if (!erro) {
+            const divErro = document.createElement('div')
+            divErro.id = 'error_cep'
+            divErro.className = 'text-danger small'
+            divErro.textContent = 'Digite um CEP válido antes de buscar.'
+            cepInput.closest('.form-group').appendChild(divErro)
+          }
+        }
+      });
+  
+      function buscarCNPJ(cnpj) {
+        const url = `https://brasilapi.com.br/api/cnpj/v1/${cnpj}`;
+
+        fetch(url)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Erro ao consultar o CNPJ. Verifique se ele é válido.');
+            }
+            return response.json();
+          })
+          .then(data => {
+            razaoSocialInput.value = data.razao_social;
+            nomeFantasiaInput.value = data.nome_fantasia;
+            logradouroInput.value = data.logradouro
+            bairroInput.value = data.bairro
+            municipioInput.value = data.municipio
+
+            if (data.complemento) {
+              complementoInput.value = data.complemento
+            }
+            if (data.cep) {
+              cepInput.value = data.cep;
+              cepInput.value = cepMask(cepInput.value)
+            }
+            if (data.uf) {
+              ufInput.value = data.uf
+              ufInput.value = ufMask(ufInput.value)
+            }
+
+            if (data.ddd_telefone_1) {
+              telInput.value = data.ddd_telefone_1
+              telInput.value = telefoneMask(telInput.value)
+            }
+
+            if (data.email) {
+              emailInput.value = data.email
+            }
+
+            for (campo of Campos_genericos) {
+              campo.value = basicValition(campo.value)
+            }
+          })
+          .catch(error => {
+            console.error('Erro:', error.message);
+          });
+      }
+
+
+
+      function buscarCEP (cep) {
+        const url = `https://brasilapi.com.br/api/cep/v1/${cep}`;
+
+        fetch(url)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Erro ao consultar o CEP. Verifique se ele é válido.');
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log(data)
+            logradouroInput.value = data.street
+            bairroInput.value = data.neighborhood
+            municipioInput.value = data.city
+
+            if (data.state) {
+              ufInput.value = data.state
+              ufInput.value = ufMask(ufInput.value)
+            }
+          })
+    
+      }
+    })
+  </script>
+{% endblock %}

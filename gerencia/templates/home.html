@@ -1,327 +1,175 @@
-{%extends 'base.html' %}
+{% extends 'base.html' %}
 {% block content %}
-    {% if user.is_authenticated %}
-        <h1 class="text-center">Usuário logado!</h1>
-    {% else %}
-        <div class="row justify-content-center">
-            <h1 class="text-center">Cadastro de cliente</h1>
-            <hr>
-            <div class="col-md-8">
-                <form method="POST" action="{% url 'home' %}">{% csrf_token %}
-
-                    <div class="row justify-content-center">
-                        <div style="max-width: 16rem;" class="form-group col">
-                            <div class="input-group flex-nowrap">
-                                <span class="input-group-text" id="addon-wrapping">CNPJ</span>
-                                <input type="text" id="cnpj" name="cnpj" class="form-control" required pattern="\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}" placeholder="00.000.000/0000-00" minlength="18">
-                            </div>
-                        </div>
-                        <div style="max-width: 16rem;" class="form-group col">
-                            <div class="input-group flex-nowrap">  
-                                <span class="input-group-text" id="addon-wrapping">CEP</span>                              
-                                <input type="text" id="cep" name="cep" class="form-control" required pattern="\d{5}-\d{3}" placeholder="00000-000">
-                            </div>
-                            
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row mb-2">
-                        <div class="form-group col-md-6">
-                            <label for="razao_social" class="form-label mb-1">Razão social:</label>
-                            <input type="text" id="razao_social" name="razao_social" class="form-control" required required minlength="3" maxlength="100">
-                        </div>
-                        <div class="form-group col-md-6"> 
-                            <label for="nome_fantasia" class="form-label mb-1">Nome fantasia:</label>
-                            <input type="text" id="nome_fantasia" name="nome_fantasia" class="form-control" required minlength="3" maxlength="100">
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="form-group col-md-6">
-                            <label for="ins_estatual" class="form-label mb-1">inscrição estadual:</label>
-                            <input type="text" id="ins_estatual" name="ins_estatual" class="form-control" required pattern="[0-9]{1,30}">
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="ins_municipal" class="form-label mb-1">inscrição municipal:</label>
-                            <input type="text" id="ins_municipal" name="ins_municipal" class="form-control" required pattern="[0-9]{5,15}">
-                        </div>
-                    </div>
-
-                    <h2>Endereço</h2>
-
-                    <div class="row mb-2">
-                        <div class="form-group col md-2">
-                            <label for="logradouro" class="form-label mb-1">Logradoro:</label>
-                            <input type="text" id="logradouro" name="logradouro" class="form-control" required minlength="5" maxlength="150">
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-2">
-                        <div class="form-group col-md-6">
-                            <label for="bairro" class="form-label mb-1">Bairro:</label>
-                            <input type="text" id="bairro" name="bairro" class="form-control" required required minlength="3" maxlength="50">
-                        </div>
-                         <div class="form-group col-md-6">
-                            <label for="municipio" class="form-label mb-1">Município:</label>
-                            <input type="text" id="municipio" name="municipio" class="form-control" required minlength="3" maxlength="50">
-                        </div>
-
-                    </div>
-
-                    <div class="row mb-2">
-                        <div class="form-group col-md">
-                            <label for="complemento" class="form-label mb-1">Complemento:</label>
-                            <input type="text" id="complemento" name="complemento" class="form-control" maxlength="80">
-                        </div>
-                        <div class="form-group col-md-1">
-                            <label for="uf" class="form-label mb-1">UF:</label>
-                            <input type="text" id="uf" name="uf" class="form-control" required maxlength="2" minlength="2" pattern="[A-Za-z]{2}">
-                        </div>
-                    </div>
-
-                    <h2>Contato</h2>
-
-                    <div class="row mb-2">
-                        <div class="form-group col-md-6">
-                            <label for="num_tell" class="form-label mb-1">Telefone:</label>
-                            <input type="text" id="num_tell" name="num_tell" class="form-control" pattern="\(\d{2}\)\s\d{4,5}-\d{4}" placeholder="(11) 4444-4444">
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="num_cel" class="form-label mb-1">Celular:</label>
-                            <input type="text" id="num_cel" name="Celular" class="form-control" pattern="\(\d{2}\)\s9\d{5}-\d{4}" placeholder="(11) 98888-8888">
-                        </div>
-                        <div class="form-group col align-self-center" >
-                            <br>
-                            <input type="checkbox" id="whatsapp" name="whatsapp" class="form-check-input" value="True">
-                            <label for="whatsapp" class="form-check-label ">Whatsapp?</label>
-                        </div>
-                    </div>
-
-                    <div class="row mb-2">
-                        <div class="form-group md-6">
-                            <label for="email" class="form-label mb-1">E-mail:</label>
-                            <input type="email" id="email" name="email" class="form-control" >
-                        </div>
-                    </div>
-
-                    <div class="row mb-2">
-                        <div class="form-group md-6">
-                            <label for="url" class="form-label mb-1">URL:</label>
-                            <input type="text" id="url" name="url" class="form-control" placeholder="https://www.exemplo.com.br">
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="form-group md-6">
-                            <button class="btn btn-secondary form-control" type="submit">Cadastrar</button>
-                        </div>
-                    </div>
-                    
-                </form>
-            </div>
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-11">
+      <!-- Cabeçalho -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Lista de Clientes</h1>
+        <div class="d-flex">
+          <a href="{% url 'register' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Novo Cliente
+          </a>
+          <form method="get" class="d-flex" role="search">
+            <input
+              class="form-control mx-2"
+              type="search"
+              placeholder="Buscar por nome, razão social ou CNPJ..."
+              name="q"
+              value="{{ request.GET.q|default:'' }}">
+            <button class="btn btn-outline-primary" type="submit">Buscar</button>
+          </form>
         </div>
-        
-    {% endif %}
+      </div>
+
+      <!-- Card da Tabela -->
+      <div class="card shadow-sm">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-dark">
+                <tr>
+                  <th>Razão Social</th>
+                  <th>Nome Fantasia</th>
+                  <th>E-mail</th>
+                  <th>CNPJ</th>
+                  <th>Cidade / UF</th>
+                </tr>
+              </thead>
+              <tbody id="clientes-tbody">
+                {% for cliente in clientes %}
+                <tr onclick="window.location='{% url 'cliente' cliente.pk %}'" style="cursor: pointer;" class="align-middle">
+                  <td class="text-truncate" style="max-width: 250px;" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ cliente.razao_social }}">
+                    <strong>{{ cliente.razao_social }}</strong>
+                  </td>
+                  <td class="text-truncate" style="max-width: 200px;" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ cliente.nome_fantasia }}">
+                    {% if cliente.nome_fantasia %}
+                      {{ cliente.nome_fantasia }}
+                    {% else %}
+                      <span class="text-muted fst-italic">Não informado</span>
+                    {% endif %}
+                  </td>
+                  <td class="text-truncate" style="max-width: 180px;" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ cliente.contatos.email }}">
+                    {% if cliente.contatos.email %}
+                      <span class="text-primary">{{ cliente.contatos.email }}</span>
+                    {% else %}
+                      <span class="text-muted fst-italic">Não informado</span>
+                    {% endif %}
+                  </td>
+                  <td class="cnpj text-nowrap">{{ cliente.cnpj }}</td>
+                  <td class="text-truncate" style="max-width: 150px;" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ cliente.endereco.municipio }} - {{ cliente.endereco.uf }}">
+                    {% if cliente.endereco %}
+                      {{ cliente.endereco.municipio }} / {{ cliente.endereco.uf }}
+                    {% else %}
+                      <span class="text-muted fst-italic">Sem endereço</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="5" class="text-center py-5">
+                    <div class="text-muted">
+                      <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                      <p class="mt-3 mb-1">Nenhum cliente cadastrado</p>
+                      <small>Clique em "Novo Cliente" para começar</small>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Informação de Total -->
+      {% if clientes %}
+      <div class="mt-3 text-muted">
+        <small>Total: {{ clientes|length }} cliente{{ clientes|length|pluralize }}</small>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    function cnpjMask(cnpj) {
+      let value = cnpj.replace(/\D/g, '');
+      value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+      value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+      value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+      value = value.replace(/(\d{4})(\d)/, '$1-$2');
+      return value.slice(0, 18);
+    }
+
+    document.querySelectorAll('.cnpj').forEach(td => {
+      td.textContent = cnpjMask(td.textContent);
+    });
+
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(el => new bootstrap.Tooltip(el, {
+      delay: { "show": 700, "hide": 0 } // 1000ms = 1 segundo
+    }));
+
+
+    const tbody = document.getElementById('clientes-tbody');
+    const searchInput = document.querySelector('input[name="q"]');
+
+    function atualizarTabela(clientes) {
+      tbody.innerHTML = ''; // limpa
+      if (clientes.length === 0) {
+        tbody.innerHTML = `<tr>
+          <td colspan="5" class="text-center py-5 text-muted">Nenhum cliente encontrado</td>
+        </tr>`;
+        return;
+      }
+      clientes.forEach(c => {
+        const tr = document.createElement('tr');
+        tr.classList.add('align-middle');
+        tr.style.cursor = 'pointer';
+        tr.onclick = () => window.location = `clientes/${c.id}/`;
+        tr.innerHTML = `
+          <td class="text-truncate" style="max-width: 250px;" data-bs-toggle="tooltip" data-bs-placement="top" title="${c.razao_social}">
+            <strong>${c.razao_social}</strong>
+          </td>
+          <td class="text-truncate" style="max-width: 200px;" data-bs-toggle="tooltip" data-bs-placement="top" title="${c.nome_fantasia || ''}">
+            ${c.nome_fantasia || '<span class="text-muted fst-italic">Não informado</span>'}
+          </td>
+          <td class="text-truncate" style="min-width: 180px; max-width: 180px;" data-bs-toggle="tooltip" data-bs-placement="top" title="${c.email || ''}">
+            ${c.email ? `<span class="text-primary">${c.email}</span>` : '<span class="text-muted fst-italic">Não informado</span>'}
+          </td>
+          <td class="cnpj text-nowrap">${c.cnpj}</td>
+          <td class="text-truncate" style="max-width: 150px;" data-bs-toggle="tooltip" data-bs-placement="top" title="${c.cidade_uf || ''}">
+            ${c.cidade_uf || '<span class="text-muted fst-italic">Sem endereço</span>'}
+          </td>
+        `;
+        tbody.appendChild(tr);
+        document.querySelectorAll('.cnpj').forEach(td => {
+          td.textContent = cnpjMask(td.textContent);
+      });
+      });
+    }
+
+    function buscarClientes() {
+      const query = searchInput.value.trim();
+      fetch(`search-clientes/?q=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+        .then(data => atualizarTabela(data.clientes))
+        .catch(err => console.error('Erro na busca:', err));
+    }
+
+    // dispara ao digitar (tecla solta)
+    searchInput.addEventListener('keyup', function(e) {
+      buscarClientes();
+    });
+
+    // dispara se o usuário clicar no botão Buscar
+    const searchForm = searchInput.closest('form');
+    searchForm.addEventListener('submit', function(e) {
+      e.preventDefault(); // evita recarregar
+      buscarClientes();
+    });
+  });
+</script>
 {% endblock %}
-{% block scripts %}
-     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const razaoSocialInput = document.getElementById('razao_social');
-            const nomeFantasiaInput = document.getElementById('nome_fantasia');
-            const complementoInput = document.getElementById('complemento');
-            const logradouroInput = document.getElementById('logradouro');
-            const bairroInput = document.getElementById('bairro')
-            const municipioInput = document.getElementById('municipio');
-            const emailInput = document.getElementById('email');
-            const urlInput = document.getElementById('url')
-            const cnpjInput = document.getElementById('cnpj');
-            const cepInput = document.getElementById('cep');
-            const ufInput = document.getElementById('uf');
-            const telInput = document.getElementById('num_tell');
-            const celInput = document.getElementById('num_cel');
-            const whatsappCheck = document.getElementById('whatsapp');
-            const insEstatualInput = document.getElementById('ins_estatual');
-            const insMunicipalInput = document.getElementById('ins_municipal');
-            Campos_genericos = [razaoSocialInput, nomeFantasiaInput, complementoInput, logradouroInput, bairroInput, municipioInput, emailInput, urlInput]
-
-            function basicValition(valor) {
-                let value = valor.trim()
-                value = value.replace(/\s{2,}/g, ' ');  
-                return value
-            }
-
-            function cnpjMask(cnpj) {
-                let value =  cnpj.replace(/\D/g, '');
-                value = value.replace(/^(\d{2})(\d)/, '$1.$2');
-                value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
-                value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
-                value = value.replace(/(\d{4})(\d)/, '$1-$2');
-                return value.slice(0, 18);
-            }
-
-            function cepMask(cep) {
-                let value = cep.replace(/\D/g, '');
-                value = value.replace(/^(\d{5})(\d)/, '$1-$2')
-                return value.slice(0, 9);
-            }
-            
-            function phoneMask (phone) {
-                let value = phone.replace(/\D/g, '');
-                value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
-                value = value.replace(/(\d{5})(\d)/, '$1-$2');
-                return value.slice(0, 15);
-            };
-            
-            function ufMask (uf) {
-                let value = uf.replace(/[^a-zA-Z]/g, ''); 
-                return value.toUpperCase().slice(0, 2); 
-            } 
-
-            for (const campo of Campos_genericos) {
-                if (campo){
-                    campo.addEventListener('blur', function(e){
-                        e.target.value = basicValition(e.target.value)
-                    })
-                }
-            }
-            
-            if (cnpjInput) {
-                cnpjInput.addEventListener('input', function(e){
-                    e.target.value = cnpjMask(e.target.value)
-                });    
-            }    
-            
-            if (cepInput){
-                cepInput.addEventListener('input', function(e){
-                    e.target.value = cepMask(e.target.value)
-                });
-            }
-
-            if (telInput) {
-                telInput.addEventListener('input', function(e) {
-                    e.target.value = phoneMask(e.target.value)
-                });
-            }    
-
-            if (celInput) {
-                celInput.addEventListener('input', function(e) {
-                    e.target.value = phoneMask(e.target.value)
-                });
-            }
-
-            if (ufInput) {
-                ufInput.addEventListener('input', function(e) {
-                    e.target.value = ufMask(e.target.value)    
-                });
-            }
-
-            if (whatsappCheck) {
-                whatsappCheck.addEventListener('change', function() {
-                    if (this.checked) {
-                        celInput.setAttribute('required', 'required');
-                    } 
-                    else {celInput.removeAttribute('required');}
-                });
-            }
-
-            if (insEstatualInput) {
-                insEstatualInput.addEventListener('input', function(e) {
-                    let value = e.target.value.replace(/\D/g, '');
-                    e.target.value = value.slice(0, 30);
-                });
-            }
-
-            if (insMunicipalInput) {
-                insMunicipalInput.addEventListener('input', function(e) {
-                    let value = e.target.value.replace(/\D/g, '');
-                    e.target.value = value.slice(0, 30);
-                });
-            }
-
-            if (cnpjInput) {
-                cnpjInput.addEventListener('blur', function(e) {
-                    const cnpj = event.target.value.replace(/\D/g, '');
-                    if (cnpj.length !== 14) {
-                        console.log('CNPJ inválido.');
-                        return;
-                    }
-
-                    const url = `https://brasilapi.com.br/api/cnpj/v1/${cnpj}`;
-
-                    fetch(url)
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Erro ao consultar o CNPJ. Verifique se ele é válido.');
-                            }
-                            return response.json();
-                        })
-
-                        .then(data => {
-                            razaoSocialInput.value = data.razao_social;
-                            nomeFantasiaInput.value = data.nome_fantasia;
-                            logradouroInput.value = data.logradouro
-                            bairroInput.value = data.bairro
-                            municipioInput.value = data.municipio
-                            
-                            if (data.complemento) {
-                                complementoInput.value = data.complemento
-                            }
-                            if (data.cep) {
-                                cepInput.value = data.cep;
-                                cepInput.value = cepMask(cepInput.value)
-                            }
-                            if (data.uf) {
-                                ufInput.value = data.uf
-                                ufInput.value = ufMask(ufInput.value)
-                            }
-
-                            if (data.ddd_telefone_1) {
-                                telInput.value = data.ddd_telefone_1
-                                telInput.value = phoneMask(telInput.value)
-                            }
-
-                            if (data.email) {
-                                emailInput.value = data.email
-                            }
-
-                            for (campo of Campos_genericos){
-                                campa.value = basicValition(campo)
-                            }
-                        })     
-                })
-            }
-        });
-
-        if (cepInput) {
-            cepInput.addEventListener('blur', function(e) {
-                const cep = event.target.value.replace(/\D/g, '');
-                if (cep.length !== 8) {
-                    console.log('CEP inválido.');
-                    return;
-                }
-
-                const url = `https://brasilapi.com.br/cep/v2/${cep}`;
-
-                fetch(url)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Erro ao consultar o CEP. Verifique se ele é válido.');
-                        }
-                        return response.json();
-                    })
-
-                    .then(data => {
-                        logradouroInput.value = data.street
-                        bairroInput.value = data.neighborhood
-                        municipioInput.value = data.city
-                        
-                        if (data.state) {
-                            ufInput.value = data.state
-                            ufInput.value = ufMask(ufInput.value)
-                        }
-                    })
-            })
-        }
-
-    </script>
-    
-
-{% endblock %}/
